@@ -17,6 +17,16 @@
 #include <string.h>
 #include <stdbool.h>
 
+
+// structure of a card
+typedef struct _Card_
+{
+  char color_;
+  int value_;
+  struct _Card_ *next_;
+  struct _Card_ *previous_;
+} Card;
+
 //-----------------------------------------------------------------------------
 ///
 /// Reads the config file
@@ -60,7 +70,7 @@ void readConfig(char *config_file)
 
 //-----------------------------------------------------------------------------
 ///
-/// Calls functions
+/// Call functions and initialize list
 ///
 /// @return always 0
 //
@@ -71,7 +81,15 @@ int main(int argc, char *argv[])
     printf("enter config file");
     exit(1);
   }
+
+  Card *head = malloc(sizeof(Card));
+  head->next_ = NULL;
+  head->previous_ = NULL;
+
   printf("esp> ");
   readConfig(argv[1]);
+
+  free(head);
+  head = NULL;
   return 0;
 }
