@@ -21,25 +21,22 @@
 // from: https://www.geeksforgeeks.org/doubly-linked-list/
 // begin
 // A linked list node
-struct Node
-{
+struct Node {
   char color_;
   int value_;
-  char* text_;
   struct Node* next_;
   struct Node* previous_;
 };
 
 /* Given a reference (pointer to pointer) to the head of a list
    and an int, inserts a new node on the front of the list. */
-void push(struct Node** head_ref, char new_color, int new_value, char* new_text)
+void push(struct Node** head_ref, char new_color, int new_value)
 {
   /* 1. allocate node */
   struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
-  /* 2. put in the text_  */
+  /* 2. put in the value_  */
   new_node->color_ = new_color;
   new_node->value_ = new_value;
-  new_node->text_ = new_text;
   /* 3. Make next_ of new node as head and previous as NULL */
   new_node->next_ = (*head_ref);
   new_node->previous_ = NULL;
@@ -60,8 +57,7 @@ void printList(struct Node* node)
   while (node != NULL)
   {
     printf("%c", node->color_);
-    printf("%d", node->value_);
-    printf("%s\n", node->text_);
+    printf("%d\n", node->value_);
     last = node;
     node = node->next_;
   }
@@ -70,8 +66,7 @@ void printList(struct Node* node)
   while (last != NULL)
   {
     printf("%c", last->color_);
-    printf("%d", last->value_);
-    printf("%s\n", last->text_);
+    printf("%d\n", last->value_);
     last = last->previous_;
   }
 }
@@ -83,7 +78,7 @@ void printList(struct Node* node)
 ///
 /// @return always 0
 //
-void readConfig(char *config_file, struct Node** head)
+void readConfig(char *config_file)
 {
   FILE *config;
   char buffer[555];
@@ -113,34 +108,19 @@ void readConfig(char *config_file, struct Node** head)
       current_char = (char)fgetc(config);
       length++;
     }
-    //printf("%s\n\n", buffer);
+    printf("%s\n\n", buffer);
 
     fclose(config);
 
     char* delimiters = " \n";
     char* token = strtok(buffer, delimiters);
-    int count;
-    char color = NULL;
-    for(count = 0; token != NULL; count++)
+    while(token != NULL)
     {
-      if(count % 2 == 0)
-      {
-        if(token == "BLACK")
-        {
-          color = 'B';
-        }
-      }
-      //printf("%s\n", token);
-      push(head, 'Y', 3, "10");
+      printf("%s\n", token);
       token = strtok(NULL, delimiters);
     }
   }
 
-}
-
-void test(struct Node** head)
-{
-  push(head, 'Z', 1, "BA");push(head, 'Z', 1, "BA");
 }
 
 //-----------------------------------------------------------------------------
@@ -159,16 +139,14 @@ int main(int argc, char *argv[])
 
   struct Node* head = NULL;
 
-  readConfig("config2.txt", &head);
+  readConfig("config2.txt");
 
-  push(&head, 'R', 1, "RA");push(&head, 'B', 1, "BA");
-  test(&head);
+  //push(&head, 'R', 7);
   //push(&head, 'B', 4);
   //push(&head, 'R', 3);
   //push(&head, 'B', 1);
   //printf("Created DLL is: ");
-
-  printList(head);
+  //printList(head);
 
 
   //printf("esp> ");
