@@ -31,25 +31,42 @@ typedef struct _Node_
 // begin
 /* Given a reference (pointer to pointer) to the head of a list 
    and an int, inserts a new node on the front of the list. */
-void push(struct _Node_** head_ref, char new_color, int new_value)
+void push(Node** head_ref, char new_color, int new_value)
 {
   /* 1. allocate node */
-  struct _Node_* new_node = (struct _Node_*)malloc(sizeof(struct _Node_));
-
+  Node* new_node = (Node*)malloc(sizeof(Node));
   /* 2. put in the data  */
   new_node->color_ = new_color;
   new_node->value_ = new_value;
-
   /* 3. Make next of new node as head and previous as NULL */
   new_node->next_ = (*head_ref);
   new_node->previous_ = NULL;
-
   /* 4. change prev of head node to new node */
   if ((*head_ref) != NULL)
     (*head_ref)->previous_ = new_node;
-
   /* 5. move the head to point to the new node */
   (*head_ref) = new_node;
+}
+
+// This function prints contents of linked list starting from the given node
+void printList(Node* node)
+{
+  Node* last;
+  printf("\nTraversal in forward direction \n");
+  while (node != NULL)
+  {
+    printf(" %c", node->color_);
+    printf(" %d\n", node->value_);
+    last = node;
+    node = node->next_;
+  }
+
+  printf("\nTraversal in reverse direction \n");
+  while (last != NULL) {
+    printf(" %d ", node->color_);
+    printf(" %d ", node->value_);
+    last = last->previous_;
+  }
 }
 // end
 
@@ -105,7 +122,7 @@ int main(int argc, char *argv[])
   if(argc != 2)
   {
     printf("enter config file");
-    exit(1);
+    //exit(1);
   }
 
   Node *head[7];
@@ -121,8 +138,13 @@ int main(int argc, char *argv[])
     head[count]->previous_ = NULL;
   }
 
-  printf("esp> ");
-  readConfig(argv[1]);
+  //printf("esp> ");
+  //readConfig(argv[1]);
+
+  push(&head[0], 'R', 2);
+  push(&head[0], 'B', 5);
+
+  printList(head[0]);
 
   for(count = 0; count < 7; count++)
   {
