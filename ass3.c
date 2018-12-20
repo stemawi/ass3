@@ -18,14 +18,40 @@
 #include <stdbool.h>
 
 
-// structure of a card
-typedef struct _Card_
+// structure of a Node
+typedef struct _Node_
 {
   char color_;
   int value_;
-  struct _Card_ *next_;
-  struct _Card_ *previous_;
-} Card;
+  struct _Node_ *next_;
+  struct _Node_ *previous_;
+} Node;
+
+// from: https://www.geeksforgeeks.org/doubly-linked-list/
+// begin
+/* Given a reference (pointer to pointer) to the head of a list 
+   and an int, inserts a new node on the front of the list. */
+void push(struct _Node_** head_ref, char new_color, int new_value)
+{
+  /* 1. allocate node */
+  struct _Node_* new_node = (struct _Node_*)malloc(sizeof(struct _Node_));
+
+  /* 2. put in the data  */
+  new_node->color_ = new_color;
+  new_node->value_ = new_value;
+
+  /* 3. Make next of new node as head and previous as NULL */
+  new_node->next_ = (*head_ref);
+  new_node->previous_ = NULL;
+
+  /* 4. change prev of head node to new node */
+  if ((*head_ref) != NULL)
+    (*head_ref)->previous_ = new_node;
+
+  /* 5. move the head to point to the new node */
+  (*head_ref) = new_node;
+}
+// end
 
 //-----------------------------------------------------------------------------
 ///
@@ -82,14 +108,25 @@ int main(int argc, char *argv[])
     exit(1);
   }
 
-  Card *head = malloc(sizeof(Card));
-  head->next_ = NULL;
-  head->previous_ = NULL;
+  Node *head[7];
+  int count;
+  for(count = 0; count < 7; count++)
+  {
+    head[count] = malloc(sizeof(Node));
+    if(head[count] == NULL)
+    {
+      printf("[ERR] Out of memory.\\n");
+    }
+    head[count]->next_ = NULL;
+    head[count]->previous_ = NULL;
+  }
 
   printf("esp> ");
   readConfig(argv[1]);
 
-  free(head);
-  head = NULL;
+  for(count = 0; count < 7; count++)
+  {
+    free(head[count]);
+  }
   return 0;
 }
