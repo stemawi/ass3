@@ -55,7 +55,7 @@ void readConfig(char *config_file)
     }
     printf("%s", buffer);
   }
-
+  fclose(config);
 }
 
 //-----------------------------------------------------------------------------
