@@ -20,8 +20,6 @@
 
 // from: https://www.geeksforgeeks.org/doubly-linked-list/
 // begin
-/* Given a reference (pointer to pointer) to the head of a list 
-   and an int, inserts a new node on the front of the list. */
 // A linked list node
 struct Node {
   int value_;
@@ -35,18 +33,16 @@ void push(struct Node** head_ref, int new_value_)
 {
   /* 1. allocate node */
   struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
-
   /* 2. put in the value_  */
   new_node->value_ = new_value_;
-
-  /* 3. Make next_ of new node as head and previous_ious as NULL */
+  /* 3. Make next_ of new node as head and previous as NULL */
   new_node->next_ = (*head_ref);
   new_node->previous_ = NULL;
-
   /* 4. change previous_ of head node to new node */
   if ((*head_ref) != NULL)
+  {
     (*head_ref)->previous_ = new_node;
-
+  }
   /* 5. move the head to point to the new node */
   (*head_ref) = new_node;
 }
@@ -56,14 +52,16 @@ void printList(struct Node* node)
 {
   struct Node* last;
   printf("\nTraversal in forward direction \n");
-  while (node != NULL) {
+  while (node != NULL)
+  {
     printf(" %d ", node->value_);
     last = node;
     node = node->next_;
   }
 
   printf("\nTraversal in reverse direction \n");
-  while (last != NULL) {
+  while (last != NULL)
+  {
     printf(" %d ", last->value_);
     last = last->previous_;
   }
