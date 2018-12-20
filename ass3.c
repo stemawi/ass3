@@ -119,19 +119,33 @@ void readConfig(char *config_file, struct Node** head)
 
     char* delimiters = " \n";
     char* token = strtok(buffer, delimiters);
-    int count;
-    char color = NULL;
+    int count = 0;
+    char color = ' ';
+    int value = 0;
     for(count = 0; token != NULL; count++)
     {
       if(count % 2 == 0)
       {
-        if(token == "BLACK")
+        if(strncmp(token, "BLACK", strlen(token)) == 0)
         {
           color = 'B';
         }
+        else if(strncmp(token, "RED", strlen(token)) == 0)
+        {
+          color = 'R';
+        }
+        else
+        {
+          printf("Input invalid");
+        }
+      }
+      else
+      {
+        value = 1;
+        push(head, color, value, " ");
       }
       //printf("%s\n", token);
-      push(head, 'Y', 3, "10");
+
       token = strtok(NULL, delimiters);
     }
   }
@@ -159,10 +173,10 @@ int main(int argc, char *argv[])
 
   struct Node* head = NULL;
 
-  readConfig("config2.txt", &head);
+  readConfig("config.txt", &head);
 
-  push(&head, 'R', 1, "RA");push(&head, 'B', 1, "BA");
-  test(&head);
+  //push(&head, 'R', 1, "RA");push(&head, 'B', 1, "BA");
+  //test(&head);
   //push(&head, 'B', 4);
   //push(&head, 'R', 3);
   //push(&head, 'B', 1);
