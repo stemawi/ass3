@@ -25,14 +25,14 @@ struct Node
 {
   char color_;
   int value_;
-  char* text_;
+  char text_;
   struct Node* next_;
   struct Node* previous_;
 };
 
 /* Given a reference (pointer to pointer) to the head of a list
    and an int, inserts a new node on the front of the list. */
-void push(struct Node** head_ref, char new_color, int new_value, char* new_text)
+void push(struct Node** head_ref, char new_color, int new_value, char new_text)
 {
   /* 1. allocate node */
   struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
@@ -61,7 +61,7 @@ void printList(struct Node* node)
   {
     printf("%c", node->color_);
     printf("%d", node->value_);
-    printf("%s\n", node->text_);
+    printf("%c\n", node->text_);
     last = node;
     node = node->next_;
   }
@@ -71,7 +71,7 @@ void printList(struct Node* node)
   {
     printf("%c", last->color_);
     printf("%d", last->value_);
-    printf("%s\n", last->text_);
+    printf("%c\n", last->text_);
     last = last->previous_;
   }
 }
@@ -101,20 +101,11 @@ void readConfig(char *config_file, struct Node** head)
     current_char = (char)fgetc(config);
     while(current_char != EOF)
     {
-      //printf("%c",current_char);
-      //if(current_char == ' ' || (current_char == '\n' && buffer[length-1] ==
-      //'\n'))
-      //{
-        //current_char = (char)fgetc(config);
-        //continue;
-      //}
       buffer[length] = current_char;
       buffer[length+1] = '\0';
       current_char = (char)fgetc(config);
       length++;
     }
-    //printf("%s\n\n", buffer);
-
     fclose(config);
 
     char* delimiters = " \n";
@@ -122,12 +113,11 @@ void readConfig(char *config_file, struct Node** head)
     int count = 0;
     char color = ' ';
     int value = 0;
-    char* value_str;
-    char text[] = "tt";
+    char* value_char;
     for(count = 0; token != NULL; count++)
     {
-      value = 0;
-      value_str = NULL;
+      //value = 0;
+      //value_char = NULL;
       if(count % 2 == 0)
       {
         if(strncmp(token, "BLACK", strlen(token)) == 0)
@@ -145,20 +135,15 @@ void readConfig(char *config_file, struct Node** head)
       }
       else
       {
-        //printf("%s\n",token);
-        //int text_length = (int)strlen(text);
+        value = (int)strtol(token, &value_char, 10);
 
-        //text[text_length+1] = '\0';
-        value = (int)strtol(token, &value_str, 10);
-        //printf("v_str: %s\n",value_str);
-
-        switch(*value_str)
+        switch(*value_char)
         {
           case 'A': value = 1; break;
           case 'J': value = 11; break;
           case 'Q': value = 12; break;
           case 'K': value = 13; break;
-          default: break;
+          default: *value_char = ' '; break;
         }
 
         if(value < 1 || value > 13)
@@ -166,10 +151,7 @@ void readConfig(char *config_file, struct Node** head)
           printf("Input invalid");
         }
 
-        text[0] = color;
-        printf("%s\n", text);
-
-        push(head, color, value, text);
+        push(head, color, value, *value_char);
       }
       //printf("%s\n", token);
 
@@ -181,7 +163,7 @@ void readConfig(char *config_file, struct Node** head)
 
 void test(struct Node** head)
 {
-  push(head, 'Z', 1, "BA");push(head, 'Z', 1, "BA");
+  push(head, 'Z', 1, 'B');push(head, 'Z', 1, 'A');
 }
 
 //-----------------------------------------------------------------------------
