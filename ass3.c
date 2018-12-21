@@ -77,6 +77,19 @@ void printList(struct Node* node)
 }
 // end
 
+bool nodeExists(struct Node* node, char new_color, int new_value)
+{
+  while (node != NULL)
+  {
+    if(node->color_ == new_color && node->value_ == new_value)
+    {
+      return true;
+    }
+    node = node->next_;
+  }
+  return false;
+}
+
 //-----------------------------------------------------------------------------
 ///
 /// Reads the config file
@@ -150,8 +163,15 @@ void readConfig(char *config_file, struct Node** head)
         {
           printf("Input invalid");
         }
+        if(!(nodeExists(*head, color, value)))
+        {
+          push(head, color, value, *value_char);
+        }
+        else
+        {
+          printf("Input invalid");
+        }
 
-        push(head, color, value, *value_char);
       }
       //printf("%s\n", token);
 
