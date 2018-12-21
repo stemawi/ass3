@@ -123,7 +123,7 @@ void readConfig(char *config_file, struct Node** head)
     char color = ' ';
     int value = 0;
     char* value_str;
-    char* text;
+    char text[] = "tt";
     for(count = 0; token != NULL; count++)
     {
       value = 0;
@@ -146,9 +146,11 @@ void readConfig(char *config_file, struct Node** head)
       else
       {
         //printf("%s\n",token);
-        text = token;
+        //int text_length = (int)strlen(text);
+
+        //text[text_length+1] = '\0';
         value = (int)strtol(token, &value_str, 10);
-        printf("v_str: %s\n",value_str);
+        //printf("v_str: %s\n",value_str);
 
         switch(*value_str)
         {
@@ -159,7 +161,15 @@ void readConfig(char *config_file, struct Node** head)
           default: break;
         }
 
-        push(head, color, value, " ");
+        if(value < 1 || value > 13)
+        {
+          printf("Input invalid");
+        }
+
+        text[0] = color;
+        printf("%s\n", text);
+
+        push(head, color, value, text);
       }
       //printf("%s\n", token);
 
