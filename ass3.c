@@ -21,21 +21,21 @@
 // from: https://www.geeksforgeeks.org/doubly-linked-list/
 // begin
 // A linked list node
-struct Node
+struct _Node_
 {
   char color_;
   int value_;
   char text_;
-  struct Node* next_;
-  struct Node* previous_;
+  struct _Node_* next_;
+  struct _Node_* previous_;
 };
 
 /* Given a reference (pointer to pointer) to the head of a list
    and an int, inserts a new node on the front of the list. */
-void push(struct Node** head_ref, char new_color, int new_value, char new_text)
+void push(struct _Node_** head_ref, char new_color, int new_value, char new_text)
 {
   /* 1. allocate node */
-  struct Node* new_node = (struct Node*)malloc(sizeof(struct Node));
+  struct _Node_* new_node = (struct _Node_*)malloc(sizeof(struct _Node_));
   /* 2. put in the text_  */
   new_node->color_ = new_color;
   new_node->value_ = new_value;
@@ -53,9 +53,9 @@ void push(struct Node** head_ref, char new_color, int new_value, char new_text)
 }
 
 // This function prints contents of linked list starting from the given node 
-void printList(struct Node* node)
+void printList(struct _Node_* node)
 {
-  struct Node* last;
+  struct _Node_* last;
   printf("\nTraversal in forward direction \n");
   while (node != NULL)
   {
@@ -77,7 +77,7 @@ void printList(struct Node* node)
 }
 // end
 
-bool nodeExists(struct Node* node, char new_color, int new_value)
+bool nodeExists(struct _Node_* node, char new_color, int new_value)
 {
   while (node != NULL)
   {
@@ -90,13 +90,25 @@ bool nodeExists(struct Node* node, char new_color, int new_value)
   return false;
 }
 
+void freeList(struct _Node_** head)
+{
+  struct _Node_* next_node = *head;
+  while(next_node != NULL)
+  {
+    next_node = (*head)->next_;
+    //printf("[DEBUG] data_: %d, free(%p)\n", (*head)->value_, (*head));
+    free(*head);
+    *head = next_node;
+  }
+}
+
 //-----------------------------------------------------------------------------
 ///
 /// Reads the config file
 ///
 /// @return always 0
 //
-void readConfig(char *config_file, struct Node** head)
+void readConfig(char *config_file, struct _Node_** head)
 {
   FILE *config;
   char buffer[512];
@@ -163,6 +175,7 @@ void readConfig(char *config_file, struct Node** head)
         {
           printf("Input invalid");
         }
+
         if(!(nodeExists(*head, color, value)))
         {
           push(head, color, value, *value_char);
@@ -178,10 +191,33 @@ void readConfig(char *config_file, struct Node** head)
       token = strtok(NULL, delimiters);
     }
   }
+}
+
+void move(struct _Node_** from_head, struct _Node_** to_head)
+{
+  /* 3. Make next_ of new node as head and previous as NULL */
+  new_node->next_ = (*head_ref);
+  new_node->previous_ = NULL;
+  /* 4. change previous_ of head node to new node */
+  if ((*head_ref) != NULL)
+  {
+    (*head_ref)->previous_ = new_node;
+  }
+  /* 5. move the head to point to the new node */
+  (*head_ref) = new_node;
+}
+
+void distributeCards()
+{
 
 }
 
-void test(struct Node** head)
+void printBoard()
+{
+
+}
+
+void test(struct _Node_** head)
 {
   push(head, 'Z', 1, 'B');push(head, 'Z', 1, 'A');
 }
@@ -199,10 +235,17 @@ int main(int argc, char *argv[])
     printf("enter config file");
     //exit(1);
   }
+  struct _Node_* stack[7];
+  stack[0] = NULL;
+  stack[1] = NULL;
+  stack[2] = NULL;
+  stack[3] = NULL;
+  stack[4] = NULL;
+  stack[5] = NULL;
+  stack[6] = NULL;
+  //struct _Node_* head = NULL;
 
-  struct Node* head = NULL;
-
-  readConfig("config.txt", &head);
+  readConfig("config.txt", &stack[0]);
 
   //push(&head, 'R', 1, "RA");push(&head, 'B', 1, "BA");
   //test(&head);
@@ -211,11 +254,11 @@ int main(int argc, char *argv[])
   //push(&head, 'B', 1);
   //printf("Created DLL is: ");
 
-  printList(head);
+  printList(stack[0]);
 
 
   //printf("esp> ");
   //readConfig(argv[1]);
-
+  freeList(&stack[0]);
   return 0;
 }
