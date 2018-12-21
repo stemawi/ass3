@@ -219,7 +219,7 @@ void printBoard()
 
 void test(struct _Node_** head)
 {
-  push(head+1, 'X', 1, 'B');push(head, 'Z', 1, 'A');
+  push(head, 'Z', 1, 'B');push(head, 'Z', 1, 'A');
 }
 
 //-----------------------------------------------------------------------------
@@ -248,7 +248,7 @@ int main(int argc, char *argv[])
   readConfig("config.txt", &stack[0]);
 
   //push(&head, 'R', 1, "RA");push(&head, 'B', 1, "BA");
-  //test(&stack[0]);
+  //test(&head);
   //push(&head, 'B', 4);
   //push(&head, 'R', 3);
   //push(&head, 'B', 1);
@@ -256,7 +256,6 @@ int main(int argc, char *argv[])
 
   printList(stack[0]);
 
-  //printList(stack[1]);
 
   //printf("esp> ");
   //readConfig(argv[1]);
