@@ -193,7 +193,7 @@ void readConfig(char *config_file, struct _Node_** head)
   }
 }
 
-void move(struct _Node_** from_head, struct _Node_** to_head)
+void move(struct _Node_** from, struct _Node_** to)
 {
   /* 3. Make next_ of new node as head and previous as NULL */
   //new_node->next_ = (*head_ref);
@@ -205,6 +205,8 @@ void move(struct _Node_** from_head, struct _Node_** to_head)
   //}
   /* 5. move the head to point to the new node */
   //(*head_ref) = new_node;
+
+
 }
 
 void distributeCards()
@@ -219,7 +221,7 @@ void printBoard()
 
 void test(struct _Node_** head)
 {
-  push(head+1, 'X', 1, 'B');push(head, 'Z', 1, 'A');
+  push(head, 'Z', 1, 'B');push(head, 'Z', 1, 'A');
 }
 
 //-----------------------------------------------------------------------------
@@ -230,6 +232,7 @@ void test(struct _Node_** head)
 //
 int main(int argc, char *argv[])
 {
+  int count = 0;
   if(argc != 2)
   {
     printf("enter config file");
@@ -246,20 +249,25 @@ int main(int argc, char *argv[])
   //struct _Node_* head = NULL;
 
   readConfig("config.txt", &stack[0]);
+  move(&stack[0], &stack[1]);
 
   //push(&head, 'R', 1, "RA");push(&head, 'B', 1, "BA");
-  //test(&stack[0]);
+  //test(&head);
   //push(&head, 'B', 4);
   //push(&head, 'R', 3);
   //push(&head, 'B', 1);
   //printf("Created DLL is: ");
 
   printList(stack[0]);
+  printList(stack[1]);
 
-  //printList(stack[1]);
 
   //printf("esp> ");
   //readConfig(argv[1]);
-  freeList(&stack[0]);
+  for(count = 0; count < 7; count++)
+  {
+    freeList(&stack[count]);
+  }
+
   return 0;
 }
