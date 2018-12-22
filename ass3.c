@@ -8,7 +8,7 @@
 // Authors: Stefan Martin Wietreich 11811040
 //                 Alexandra Nadler 11807596
 //
-// Latest Changes: 19.12.2018 (by Stefan Martin Wietreich)
+// Latest Changes: 23.12.2018 (by Stefan Martin Wietreich)
 //-----------------------------------------------------------------------------
 //
 
@@ -214,9 +214,51 @@ void distributeCards()
 
 }
 
-void printBoard()
+void printSpace(int amount)
 {
+  int count = 0;
+  for(count = 0; count < amount; count++)
+  {
+    printf(" ");
+  }
+}
 
+void printNode(struct _Node_* node)
+{
+  if(node == NULL)
+  {
+    printSpace(5);
+  }
+  else
+  {
+    if(node->text_ == ' ')
+    {
+      printf("%c%d", node->color_, node->value_);
+      if(node->value_ == 10)
+      {
+        printSpace(1);
+      }
+      else
+      {
+        printSpace(2);
+      }
+    }
+    else
+    {
+      printf("%c%c", node->color_, node->text_);
+      printSpace(2);
+    }
+  }
+
+
+}
+
+void printBoard(struct _Node_* node)
+{
+  printf("0   | 1   | 2   | 3   | 4   | DEP | DEP\n"
+         "---------------------------------------\n");
+  printNode(node);
+  printNode(node->next_->next_->next_);
 }
 
 void test(struct _Node_** head)
@@ -260,7 +302,7 @@ int main(int argc, char *argv[])
 
   printList(stack[0]);
   printList(stack[1]);
-
+  printBoard(stack[0]);
 
   //printf("esp> ");
   //readConfig(argv[1]);
