@@ -347,13 +347,11 @@ int main(int argc, char *argv[])
     //exit(1);
   }
   struct _Node_* stack[7];
-  stack[0] = NULL;
-  stack[1] = NULL;
-  stack[2] = NULL;
-  stack[3] = NULL;
-  stack[4] = NULL;
-  stack[5] = NULL;
-  stack[6] = NULL;
+  for(count = 0; count < 7; count++)
+  {
+    stack[count] = NULL;
+  }
+
   //struct _Node_* head = NULL;
 
   readConfig("config.txt", &stack[0]);
