@@ -32,6 +32,12 @@ struct _Node_
 
 /* Given a reference (pointer to pointer) to the head of a list
    and an int, inserts a new node on the front of the list. */
+//-----------------------------------------------------------------------------
+///
+/// Reads the config file
+///
+/// @return always 0
+//
 void push(struct _Node_** head_ref, char new_color, int new_value, char new_text)
 {
   /* 1. allocate node */
@@ -52,7 +58,13 @@ void push(struct _Node_** head_ref, char new_color, int new_value, char new_text
   (*head_ref) = new_node;
 }
 
-// This function prints contents of linked list starting from the given node 
+// This function prints contents of linked list starting from the given node
+//-----------------------------------------------------------------------------
+///
+/// Reads the config file
+///
+/// @return always 0
+//
 void printList(struct _Node_* node)
 {
   struct _Node_* last;
@@ -77,6 +89,12 @@ void printList(struct _Node_* node)
 }
 // end
 
+//-----------------------------------------------------------------------------
+///
+/// Reads the config file
+///
+/// @return always 0
+//
 bool nodeExists(struct _Node_* node, char new_color, int new_value)
 {
   while (node != NULL)
@@ -193,6 +211,12 @@ void readConfig(char *config_file, struct _Node_** head)
   }
 }
 
+//-----------------------------------------------------------------------------
+///
+/// Reads the config file
+///
+/// @return always 0
+//
 void move(struct _Node_** from, struct _Node_** to)
 {
   /* 3. Make next_ of new node as head and previous as NULL */
@@ -209,11 +233,23 @@ void move(struct _Node_** from, struct _Node_** to)
 
 }
 
+//-----------------------------------------------------------------------------
+///
+/// Reads the config file
+///
+/// @return always 0
+//
 void distributeCards()
 {
 
 }
 
+//-----------------------------------------------------------------------------
+///
+/// Prints spaces to the console
+///
+/// @param amount Number of spaces to print
+//
 void printSpace(int amount)
 {
   int count = 0;
@@ -253,6 +289,12 @@ void printNode(struct _Node_* node)
 
 }
 
+//-----------------------------------------------------------------------------
+///
+/// Prints the game board
+///
+/// @param struct _Node_* node[] array of linked list nodes
+//
 void printBoard(struct _Node_* node[])
 {
   int column = 0;
@@ -290,14 +332,9 @@ void printBoard(struct _Node_* node[])
   //printNode(node->next_->next_->next_);
 }
 
-void test(struct _Node_** head)
-{
-  push(head, 'Z', 1, 'B');push(head, 'Z', 1, 'A');
-}
-
 //-----------------------------------------------------------------------------
 ///
-/// Call functions and initialize list
+/// Calls functions and initializes lists
 ///
 /// @return always 0
 //
