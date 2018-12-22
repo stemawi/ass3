@@ -157,6 +157,8 @@ void readConfig(char *config_file, struct _Node_** head)
     char color = ' ';
     int value = 0;
     char* value_char;
+    int write_count = 0;
+    int stack = 0;
     for(count = 0; token != NULL; count++)
     {
       //value = 0;
@@ -194,9 +196,25 @@ void readConfig(char *config_file, struct _Node_** head)
           printf("Input invalid");
         }
 
+        switch(write_count+1)
+        {
+          case 1: stack = 1; break;
+          case 2: stack = 2; break;
+          case 3: stack = 3; break;
+          case 4: stack = 4; break;
+          case 5: stack = 2; break;
+          case 6: stack = 3; break;
+          case 7: stack = 4; break;
+          case 8: stack = 3; break;
+          case 9: stack = 4; break;
+          case 10: stack = 4; break;
+          default: stack = 0; break;
+        }
+
         if(!(nodeExists(*head, color, value)))
         {
-          push(head, color, value, *value_char);
+          push(head+stack, color, value, *value_char);
+          write_count++;
         }
         else
         {
@@ -355,7 +373,7 @@ int main(int argc, char *argv[])
   //struct _Node_* head = NULL;
 
   readConfig("config.txt", &stack[0]);
-  push(&stack[1], 'Z', 1, 'A');
+  //push(&stack[1], 'Z', 1, 'A');
   move(&stack[0], &stack[1]);
 
   //push(&head, 'R', 1, "RA");push(&head, 'B', 1, "BA");
