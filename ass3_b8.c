@@ -18,6 +18,8 @@
 #include <stdbool.h>
 #include <ctype.h>
 
+
+
 // from: https://www.geeksforgeeks.org/doubly-linked-list/
 // begin
 // A linked list node
@@ -136,24 +138,20 @@ void deleteNode(struct _Node_** head_ref, struct _Node_* del)
 {
   /* base case */
   if (*head_ref == NULL || del == NULL)
-  {
     return;
-  }
+
   /* If node to be deleted is head node */
   if (*head_ref == del)
-  {
     *head_ref = del->next_;
-  }
+
   /* Change next only if node to be deleted is NOT the last node */
   if (del->next_ != NULL)
-  {
     del->next_->previous_ = del->previous_;
-  }
+
   /* Change prev only if node to be deleted is NOT the first node */
   if (del->previous_ != NULL)
-  {
     del->previous_->next_ = del->next_;
-  }
+
   /* Finally, free the memory occupied by del*/
   free(del);
 }
@@ -187,6 +185,7 @@ void freeList(struct _Node_** head)
   while(next_node != NULL)
   {
     next_node = (*head)->next_;
+    //printf("[DEBUG] data_: %d, free(%p)\n", (*head)->value_, (*head));
     free(*head);
     *head = next_node;
   }
@@ -281,6 +280,7 @@ void readConfig(char *config_file, struct _Node_** head)
       length++;
     }
     fclose(config);
+
     writeConfig(buffer, head);
   }
 }
@@ -299,6 +299,9 @@ void move(struct _Node_** from, struct _Node_** to)
   {
     last = last->next_;
   }
+  //append(to, (*from)->color_, (*from)->value_, (*from)->text_);
+  //deleteNode(from, *from);
+
   append(to, last->color_, last->value_, last->text_);
   deleteNode(from, last);
 }
@@ -321,6 +324,8 @@ void distributeCards(struct _Node_* stack[])
   move(&stack[0], &stack[3]);
   move(&stack[0], &stack[4]);
   move(&stack[0], &stack[4]);
+
+  move(&stack[4], &stack[6]);
 }
 
 //-----------------------------------------------------------------------------
@@ -364,6 +369,8 @@ void printNode(struct _Node_* node)
       printSpace(2);
     }
   }
+
+
 }
 
 //-----------------------------------------------------------------------------
@@ -378,6 +385,7 @@ void printBoard(struct _Node_* node[])
   int row = 0;
   printf("0   | 1   | 2   | 3   | 4   | DEP | DEP\n"
          "---------------------------------------\n");
+
   for(row = 0; row < 16; row++)
   {
     for(column = 0; column < 7; column++)
@@ -386,18 +394,12 @@ void printBoard(struct _Node_* node[])
       {
         printSpace(1);
       }
-      if(column == 0 && node[column]->next_ != NULL)
-      {
-        printf("X   ");
-      }
-      else
-      {
-        printNode(node[column]);
-      }
+      printNode(node[column]);
       if(node[column] != NULL)
       {
         node[column] = node[column]->next_;
       }
+
       if(column < 6)
       {
         printf("|");
@@ -456,78 +458,87 @@ void userInput(struct _Node_* stack[])
 {
   printf("esp> ");
   char *buffer = readLine();
-  char color = ' ';
-  int value = 0;
-  char *value_char = " ";
-  int destination = 0;
+  char color;
+  int value;
+  char *value_char;
+  int destination;
   char* delimiters = " ";
-  int count = 0;
-  char* data[10];
   char* token = strtok(buffer, delimiters);
-  if(token != NULL && strncmp(token, "help", strlen(token)) == 0)
+
+  if(token != NULL)
   {
-    printf("help");
-  }
-  else if(token != NULL && strncmp(token, "exit", strlen(token)) == 0)
-  {
-    printf("exit");
-  }
-  else if(token != NULL && strncmp(token, "move", strlen(token)) == 0)
-  {
-    token = strtok(NULL, delimiters);
-    if(token != NULL && strncmp(token, "black", strlen(token)) == 0)
+    if(strncmp(token, "help", strlen(token)) == 0)
     {
-      color = 'B';
-      token = strtok(NULL, delimiters);
-      if(token != NULL)
-      {
-        value = (int)strtol(token, &value_char, 10);
-        token = strtok(NULL, delimiters);
-        if(token != NULL && strncmp(token, "to", strlen(token)) == 0)
-        {
-          token = strtok(NULL, delimiters);
-          if(token != NULL)
-          {
-            destination = (int)strtol(token, NULL, 10);
-          }
-        }
-      }
+      printf("hilfe");
     }
-    else if(token != NULL && strncmp(token, "red", strlen(token)) == 0)
+    else if(strncmp(token, "exit", strlen(token)) == 0)
     {
-      color = 'R';
+      printf("exit");
+    }
+    else if(strncmp(token, "move", strlen(token)) == 0)
+    {
       token = strtok(NULL, delimiters);
-      if(token != NULL)
+      if(strncmp(token, "black", strlen(token)) == 0)
       {
-        value = (int)strtol(token, &value_char, 10);
+        printf("move black");
+        color = 'B';
         token = strtok(NULL, delimiters);
-        if(token != NULL && strncmp(token, "to", strlen(token)) == 0)
+        value = (int)strtol(token, &value_char, 10);
+        switch(*value_char)
         {
-          token = strtok(NULL, delimiters);
-          if(token != NULL)
-          {
-            destination = (int)strtol(token, NULL, 10);
-          }
+          case 'A': value = 1; break;
+          case 'J': value = 11; break;
+          case 'Q': value = 12; break;
+          case 'K': value = 13; break;
+          default: *value_char = ' '; break;
         }
+        if(value < 1 || value > 13)
+        {
+          printf("Input invalid");
+        }
+        token = strtok(NULL, delimiters);
+        destination = (int)strtol(token, NULL, 10);
+        move(&stack[findCard(stack, color, value)], &stack[destination]);
+      }
+      else if(strncmp(token, "red", strlen(token)) == 0)
+      {
+        printf("move red");
+        color = 'R';
+        token = strtok(NULL, delimiters);
+        value = (int)strtol(token, &value_char, 10);
+        switch(*value_char)
+        {
+          case 'A': value = 1; break;
+          case 'J': value = 11; break;
+          case 'Q': value = 12; break;
+          case 'K': value = 13; break;
+          default: *value_char = ' '; break;
+        }
+        if(value < 1 || value > 13)
+        {
+          printf("Input invalid");
+        }
+        token = strtok(NULL, delimiters);
+        destination = (int)strtol(token, NULL, 10);
+        move(&stack[findCard(stack, color, value)], &stack[destination]);
       }
     }
     else
     {
-      printf("invalid command");
+      printf("[INFO] Invalid command!\\n");
     }
-    switch(*value_char)
-    {
-      case 'A': value = 1; break;
-      case 'J': value = 11; break;
-      case 'Q': value = 12; break;
-      case 'K': value = 13; break;
-      default: *value_char = ' '; break;
-    }
-    move(&stack[findCard(stack, color, value)], &stack[destination]);
-    printBoard(stack);
   }
+
+
+
+      //value = (int)strtol(token, &value_char, 10);
+
+
+    //token = strtok(NULL, delimiters);
+
+
+
   free(buffer);
-  userInput(stack);
 }
 
 //-----------------------------------------------------------------------------
@@ -552,11 +563,18 @@ int main(int argc, char *argv[])
   //readConfig(argv[1]);
   readConfig("config.txt", &stack[0]);
   distributeCards(stack);
+
+  //printList(stack[0]);
+  //printList(stack[1]);
+
   printBoard(stack);
   userInput(stack);
+
+  //printf("esp> ");
   for(count = 0; count < 7; count++)
   {
     freeList(&stack[count]);
   }
+
   return 0;
 }
