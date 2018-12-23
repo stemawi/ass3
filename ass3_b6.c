@@ -58,43 +58,6 @@ void push(struct _Node_** head_ref, char new_color, int new_value, char new_text
   (*head_ref) = new_node;
 }
 
-//-----------------------------------------------------------------------------
-///
-/// Reads the config file
-///
-/// @return always 0
-//
-void append(struct _Node_** head_ref, char new_color, int new_value, char new_text)
-{
-  /* 1. allocate node */
-  struct _Node_* new_node = (struct _Node_*)malloc(sizeof(struct _Node_));
-  struct _Node_* last = *head_ref; /* used in step 5*/
-  /* 2. put in the data  */
-  new_node->color_ = new_color;
-  new_node->value_ = new_value;
-  new_node->text_ = new_text;
-  /* 3. This new node is going to be the last node, so
-        make next of it as NULL*/
-  new_node->next_ = NULL;
-  /* 4. If the Linked List is empty, then make the new
-        node as head */
-  if (*head_ref == NULL)
-  {
-    new_node->previous_ = NULL;
-    *head_ref = new_node;
-    return;
-  }
-  /* 5. Else traverse till the last node */
-  while (last->next_ != NULL)
-  {
-    last = last->next_;
-  }
-  /* 6. Change the next of last node */
-  last->next_ = new_node;
-  /* 7. Make last node as previous of new node */
-  new_node->previous_ = last;
-}
-
 // This function prints contents of linked list starting from the given node
 //-----------------------------------------------------------------------------
 ///
@@ -124,45 +87,13 @@ void printList(struct _Node_* node)
     last = last->previous_;
   }
 }
-
-//-----------------------------------------------------------------------------
-///
-/// Deletes a given node from the list
-///
-/// @param struct _Node_** head_ref Head of the list
-/// @param struct _Node_* del Node to delete
-//
-void deleteNode(struct _Node_** head_ref, struct _Node_* del)
-{
-  /* base case */
-  if (*head_ref == NULL || del == NULL)
-    return;
-
-  /* If node to be deleted is head node */
-  if (*head_ref == del)
-    *head_ref = del->next_;
-
-  /* Change next only if node to be deleted is NOT the last node */
-  if (del->next_ != NULL)
-    del->next_->previous_ = del->previous_;
-
-  /* Change prev only if node to be deleted is NOT the first node */
-  if (del->previous_ != NULL)
-    del->previous_->next_ = del->next_;
-
-  /* Finally, free the memory occupied by del*/
-  free(del);
-}
 // end
 
 //-----------------------------------------------------------------------------
 ///
-/// Checks if a node with the given values exists
+/// Reads the config file
 ///
-/// @param struct _Node_* node head of the list
-/// @param char new_color Color of the new card
-/// @param int new_value Value of the new card
-/// @return true if the node exists, false if not
+/// @return always 0
 //
 bool nodeExists(struct _Node_* node, char new_color, int new_value)
 {
@@ -193,8 +124,7 @@ void freeList(struct _Node_** head)
 ///
 /// Reads the config file
 ///
-/// @param char *config_file Name of the config file
-/// @param struct _Node_** head Head of the list to insert data
+/// @return always 0
 //
 void readConfig(char *config_file, struct _Node_** head)
 {
@@ -209,6 +139,8 @@ void readConfig(char *config_file, struct _Node_** head)
   }
   else
   {
+    printf("file found\n");
+
     current_char = (char)fgetc(config);
     while(current_char != EOF)
     {
@@ -225,6 +157,9 @@ void readConfig(char *config_file, struct _Node_** head)
     char color = ' ';
     int value = 0;
     char* value_char;
+    int write_count = 0;
+    int stack = 0;
+    bool card_exists = false;
     for(count = 0; token != NULL; count++)
     {
       //value = 0;
@@ -262,9 +197,34 @@ void readConfig(char *config_file, struct _Node_** head)
           printf("Input invalid");
         }
 
-        if(!(nodeExists(*head, color, value)))
+        switch(write_count+1)
         {
-          push(head, color, value, *value_char);
+          case 1: stack = 1; break;
+          case 2: stack = 2; break;
+          case 3: stack = 3; break;
+          case 4: stack = 4; break;
+          case 5: stack = 2; break;
+          case 6: stack = 3; break;
+          case 7: stack = 4; break;
+          case 8: stack = 3; break;
+          case 9: stack = 4; break;
+          case 10: stack = 4; break;
+          default: stack = 0; break;
+        }
+
+        int exists_count = 0;
+        for(exists_count = 0; exists_count < 7; exists_count++)
+        {
+          if(nodeExists(*(head+exists_count), color, value))
+          {
+            card_exists = true;
+          }
+        }
+
+        if(!(card_exists))
+        {
+          push(head+stack, color, value, *value_char);
+          write_count++;
         }
         else
         {
@@ -272,6 +232,8 @@ void readConfig(char *config_file, struct _Node_** head)
         }
 
       }
+      //printf("%s\n", token);
+
       token = strtok(NULL, delimiters);
     }
   }
@@ -279,45 +241,35 @@ void readConfig(char *config_file, struct _Node_** head)
 
 //-----------------------------------------------------------------------------
 ///
-/// moves nodes
+/// Reads the config file
 ///
-/// @param struct _Node_** from node to move
-/// @param struct _Node_** to destination list
+/// @return always 0
 //
 void move(struct _Node_** from, struct _Node_** to)
 {
-  struct _Node_* last =  *from;
-  while(last->next_ != NULL)
-  {
-    last = last->next_;
-  }
-  //append(to, (*from)->color_, (*from)->value_, (*from)->text_);
-  //deleteNode(from, *from);
+  /* 3. Make next_ of new node as head and previous as NULL */
+  //new_node->next_ = (*head_ref);
+  //new_node->previous_ = NULL;
+  /* 4. change previous_ of head node to new node */
+  //if ((*head_ref) != NULL)
+  //{
+  //  (*head_ref)->previous_ = new_node;
+  //}
+  /* 5. move the head to point to the new node */
+  //(*head_ref) = new_node;
 
-  append(to, last->color_, last->value_, last->text_);
-  deleteNode(from, last);
+
 }
 
 //-----------------------------------------------------------------------------
 ///
-/// Starts the game
+/// Reads the config file
 ///
-/// @param struct _Node_* stack[] array of the card stacks
+/// @return always 0
 //
-void distributeCards(struct _Node_* stack[])
+void distributeCards()
 {
-  move(&stack[0], &stack[1]);
-  move(&stack[0], &stack[2]);
-  move(&stack[0], &stack[3]);
-  move(&stack[0], &stack[4]);
-  move(&stack[0], &stack[2]);
-  move(&stack[0], &stack[3]);
-  move(&stack[0], &stack[4]);
-  move(&stack[0], &stack[3]);
-  move(&stack[0], &stack[4]);
-  move(&stack[0], &stack[4]);
 
-  move(&stack[4], &stack[6]);
 }
 
 //-----------------------------------------------------------------------------
@@ -399,18 +351,13 @@ void printBoard(struct _Node_* node[])
     }
     printf("\n");
   }
-}
 
-//-----------------------------------------------------------------------------
-///
-/// scans user commands
-///
-/// @param struct _Node_* node[] array of linked list nodes
-//
-void userInput()
-{
-  char command[7];
 
+
+  //printNode(node);
+  //printf("|");
+  //printSpace(1);
+  //printNode(node->next_->next_->next_);
 }
 
 //-----------------------------------------------------------------------------
@@ -424,7 +371,7 @@ int main(int argc, char *argv[])
   int count = 0;
   if(argc != 2)
   {
-    printf("enter config file\n");
+    printf("enter config file");
     //exit(1);
   }
   struct _Node_* stack[7];
@@ -433,11 +380,21 @@ int main(int argc, char *argv[])
     stack[count] = NULL;
   }
 
-  readConfig("config.txt", &stack[0]);
-  distributeCards(stack);
+  //struct _Node_* head = NULL;
 
-  //printList(stack[0]);
-  //printList(stack[1]);
+  readConfig("config.txt", &stack[0]);
+  //push(&stack[1], 'Z', 1, 'A');
+  move(&stack[0], &stack[1]);
+
+  //push(&head, 'R', 1, "RA");push(&head, 'B', 1, "BA");
+  //test(&head);
+  //push(&head, 'B', 4);
+  //push(&head, 'R', 3);
+  //push(&head, 'B', 1);
+  //printf("Created DLL is: ");
+
+  printList(stack[0]);
+  printList(stack[1]);
 
   printBoard(stack);
 
