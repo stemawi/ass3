@@ -264,7 +264,7 @@ void readConfig(char *config_file, struct _Node_** head)
 
         if(!(nodeExists(*head, color, value)))
         {
-          push(head, color, value, *value_char);
+          append(head, color, value, *value_char);
         }
         else
         {
@@ -432,7 +432,7 @@ int main(int argc, char *argv[])
   {
     stack[count] = NULL;
   }
-
+  //readConfig(argv[1]);
   readConfig("config.txt", &stack[0]);
   distributeCards(stack);
 
@@ -441,8 +441,7 @@ int main(int argc, char *argv[])
 
   printBoard(stack);
 
-  printf("esp> ");
-  //readConfig(argv[1]);
+  //printf("esp> ");
   for(count = 0; count < 7; count++)
   {
     freeList(&stack[count]);
