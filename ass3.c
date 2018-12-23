@@ -16,6 +16,8 @@
 #include <stdlib.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
+
 
 
 // from: https://www.geeksforgeeks.org/doubly-linked-list/
@@ -191,6 +193,66 @@ void freeList(struct _Node_** head)
 
 //-----------------------------------------------------------------------------
 ///
+/// Writes config file contents to the list
+///
+/// @param char *config_file Name of the config file
+/// @param struct _Node_** head Head of the list to insert data
+//
+void writeConfig(char buffer[], struct _Node_** head)
+{
+  char* delimiters = " \n";
+  char* token = strtok(buffer, delimiters);
+  int count = 0;
+  char color = ' ';
+  int value = 0;
+  char* value_char;
+  for(count = 0; token != NULL; count++)
+  {
+    if(count % 2 == 0)
+    {
+      if(strncmp(token, "BLACK", strlen(token)) == 0)
+      {
+        color = 'B';
+      }
+      else if(strncmp(token, "RED", strlen(token)) == 0)
+      {
+        color = 'R';
+      }
+      else
+      {
+        printf("Input invalid");
+      }
+    }
+    else
+    {
+      value = (int)strtol(token, &value_char, 10);
+      switch(*value_char)
+      {
+        case 'A': value = 1; break;
+        case 'J': value = 11; break;
+        case 'Q': value = 12; break;
+        case 'K': value = 13; break;
+        default: *value_char = ' '; break;
+      }
+      if(value < 1 || value > 13)
+      {
+        printf("Input invalid");
+      }
+      if(!(nodeExists(*head, color, value)))
+      {
+        append(head, color, value, *value_char);
+      }
+      else
+      {
+        printf("Input invalid");
+      }
+    }
+    token = strtok(NULL, delimiters);
+  }
+}
+
+//-----------------------------------------------------------------------------
+///
 /// Reads the config file
 ///
 /// @param char *config_file Name of the config file
@@ -219,61 +281,7 @@ void readConfig(char *config_file, struct _Node_** head)
     }
     fclose(config);
 
-    char* delimiters = " \n";
-    char* token = strtok(buffer, delimiters);
-    int count = 0;
-    char color = ' ';
-    int value = 0;
-    char* value_char;
-    for(count = 0; token != NULL; count++)
-    {
-      //value = 0;
-      //value_char = NULL;
-      if(count % 2 == 0)
-      {
-        if(strncmp(token, "BLACK", strlen(token)) == 0)
-        {
-          color = 'B';
-        }
-        else if(strncmp(token, "RED", strlen(token)) == 0)
-        {
-          color = 'R';
-        }
-        else
-        {
-          printf("Input invalid");
-        }
-      }
-      else
-      {
-        value = (int)strtol(token, &value_char, 10);
-
-        switch(*value_char)
-        {
-          case 'A': value = 1; break;
-          case 'J': value = 11; break;
-          case 'Q': value = 12; break;
-          case 'K': value = 13; break;
-          default: *value_char = ' '; break;
-        }
-
-        if(value < 1 || value > 13)
-        {
-          printf("Input invalid");
-        }
-
-        if(!(nodeExists(*head, color, value)))
-        {
-          append(head, color, value, *value_char);
-        }
-        else
-        {
-          printf("Input invalid");
-        }
-
-      }
-      token = strtok(NULL, delimiters);
-    }
+    writeConfig(buffer, head);
   }
 }
 
@@ -401,6 +409,45 @@ void printBoard(struct _Node_* node[])
   }
 }
 
+// DI Dr. Christian Safran, 4_read_line.c
+// begin
+//-----------------------------------------------------------------------------
+///
+/// read a line (not very fast, but works)
+///
+/// @return buffer line from stdin
+//
+char* readLine(void)
+{
+  int ch, len;
+  char *buffer = malloc(1);
+  for (len=0; (ch = getchar()) != '\n' && ch != EOF; len++)
+  {
+    buffer[len] = (char)tolower(ch);
+    buffer = realloc(buffer, len+(size_t )2); // +1 due to index. +1 due to \0
+  }
+  buffer[len] = '\0';
+  return buffer;
+}
+// end
+
+int findCard(struct _Node_* stack[], char color, int value)
+{
+  int count;
+  for(count = 0; count < 7; count++)
+  {
+    while(stack[count]->next_ != NULL)
+    {
+      if(stack[count]->color_ == color && stack[count]->value_ == value)
+      {
+        return count;
+      }
+      stack[count] = stack[count]->next_;
+    }
+  }
+  return 0;
+}
+
 //-----------------------------------------------------------------------------
 ///
 /// scans user commands
@@ -410,7 +457,82 @@ void printBoard(struct _Node_* node[])
 void userInput(struct _Node_* stack[])
 {
   printf("esp> ");
+  char *buffer = readLine();
+  char color;
+  int value;
+  char *value_char;
+  int destination;
+  char* delimiters = " ";
+  char* token = strtok(buffer, delimiters);
 
+  if(token != NULL)
+  {
+    if(strncmp(token, "help", strlen(token)) == 0)
+    {
+      printf("hilfe");
+    }
+    else if(strncmp(token, "exit", strlen(token)) == 0)
+    {
+      printf("exit");
+    }
+    else if(strncmp(token, "move", strlen(token)) == 0)
+    {
+      token = strtok(NULL, delimiters);
+      if(strncmp(token, "black", strlen(token)) == 0)
+      {
+        printf("move black");
+        color = 'B';
+        token = strtok(NULL, delimiters);
+        value = (int)strtol(token, &value_char, 10);
+        switch(*value_char)
+        {
+          case 'A': value = 1; break;
+          case 'J': value = 11; break;
+          case 'Q': value = 12; break;
+          case 'K': value = 13; break;
+          default: *value_char = ' '; break;
+        }
+        if(value < 1 || value > 13)
+        {
+          printf("Input invalid");
+        }
+      }
+      else if(strncmp(token, "red", strlen(token)) == 0)
+      {
+        printf("move red");
+        color = 'R';
+        token = strtok(NULL, delimiters);
+        value = (int)strtol(token, &value_char, 10);
+        switch(*value_char)
+        {
+          case 'A': value = 1; break;
+          case 'J': value = 11; break;
+          case 'Q': value = 12; break;
+          case 'K': value = 13; break;
+          default: *value_char = ' '; break;
+        }
+        if(value < 1 || value > 13)
+        {
+          printf("Input invalid");
+        }
+      }
+    }
+    else
+    {
+      printf("[INFO] Invalid command!\\n");
+    }
+  }
+
+
+
+      //value = (int)strtol(token, &value_char, 10);
+
+
+    //token = strtok(NULL, delimiters);
+
+
+
+  free(buffer);
 }
 
 //-----------------------------------------------------------------------------
